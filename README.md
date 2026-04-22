@@ -1,6 +1,6 @@
-# APP3
+# APP3 : Petite balade en métro et en tramway
 
-# Lowest unique Bid
+
 ## Membres du groupe et rôles
 Sarah (sarahaguessy): Barreur  
 Julie (Julie-2006) : Secrétaire    
