@@ -28,11 +28,11 @@ Pour utiliser ce programme:
 ## Structure du projet
 Lors de la première séance nous avons pris connaissance du sujet et des différentes tâches à réaliser. Nous nous sommes également répartis le travail de la manière suivante : 
 - Romain : 
-- Julie : 
-- Sarah : 
-- Rosalie :
+- Julie : Charger des données
+- Sarah : Parcourir le réseau
+- Rosalie : Trouver le meilleur itinéraire
 - Arthaud : 
-- Arthur : 
+- Arthur : Visualisation du graphe
 
 Lors des séances suivantes, nous avons chacun travaillé sur notre code, puis nous avons mis en commun.
 
