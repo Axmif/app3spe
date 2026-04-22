@@ -14,9 +14,10 @@ Rosalie (user1-r0) : Barreur
 -> main.py
 - charger_donnees.py  
 - parcours_reseau.py
-- itineraire.py
+- meilleur_itineraire.py
 - generalisation.py
 - interface.py
+- gestion_des_perturbations.py
 
   
 ## Choix techniques : structure de données, algorithmes utilisés...
