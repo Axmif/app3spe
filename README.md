@@ -12,6 +12,11 @@ Rosalie (user1-r0) : Barreur
 
 ## Parties à coder
 -> main.py
+- charger_donnees.py  
+- parcours_reseau.py
+- itineraire.py
+- generalisation.py
+- interface.py
 
   
 ## Choix techniques : structure de données, algorithmes utilisés...
