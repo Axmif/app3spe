@@ -1,5 +1,7 @@
 # Plan du Projet
 
+## Reformulation du problème
+
 
 ## Entrées / Sorties
 Entrées:
