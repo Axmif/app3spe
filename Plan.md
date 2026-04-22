@@ -4,6 +4,7 @@
 ## Entrées / Sorties
 Entrées:
 
+Sorties:
 
 ## Liste des tâches
 
