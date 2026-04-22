@@ -35,9 +35,10 @@ Lors de la première séance nous avons pris connaissance du sujet et des diffé
 - Romain : 
 - Julie : Charger des données
 - Sarah : Parcourir le réseau
-- Rosalie : Trouver le meilleur itinéraire
+- Rosalie : Trouver le meilleur itinéraire (en implémentant l'algorithme de Dijkstra)
 - Arthaud : 
 - Arthur : Visualisation du graphe
+Nous avons chacun de notre côté commencé à travailler sur notre partie afin de bien comprendre les livrables attendus ainsi que les algorithmes à utiliser.
 
 Lors des séances suivantes, nous avons chacun travaillé sur notre code, puis nous avons mis en commun.
 
