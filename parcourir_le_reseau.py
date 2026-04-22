@@ -11,11 +11,6 @@ Contenu :
 
 from collections import defaultdict, deque
 
-
-# ─────────────────────────────────────────────────────────────
-# 1.  STRUCTURE DE DONNÉES — Liste d'adjacence
-# ─────────────────────────────────────────────────────────────
-
 class TransportGraph:
     """
     Graphe pondéré représentant un réseau de transport en commun.
@@ -56,11 +51,7 @@ class TransportGraph:
     def transfer_stations(self) -> list:
         """Retourne les stations desservies par au moins deux lignes."""
         return [s for s, lines in self.transfers.items() if len(lines) >= 2]
-
-
-# ─────────────────────────────────────────────────────────────
-# 2.  BFS — Chemin avec le moins d'arrêts
-# ─────────────────────────────────────────────────────────────
+      
 
 def bfs(graph: TransportGraph, start: str, end: str) -> dict:
     """
@@ -112,10 +103,6 @@ def bfs(graph: TransportGraph, start: str, end: str) -> dict:
 
     return {'path': [], 'stops': -1, 'visited': bfs_order, 'found': False}
 
-
-# ─────────────────────────────────────────────────────────────
-# 3.  DFS — Exploration en profondeur
-# ─────────────────────────────────────────────────────────────
 
 def dfs(graph: TransportGraph, start: str, end: str = None) -> dict:
     """
@@ -170,11 +157,6 @@ def dfs(graph: TransportGraph, start: str, end: str = None) -> dict:
     else:
         return {'path': [], 'visited': dfs_order, 'found': False}
 
-
-# ─────────────────────────────────────────────────────────────
-# 4.  CONNEXITÉ — Toutes les stations sont-elles accessibles ?
-# ─────────────────────────────────────────────────────────────
-
 def check_connectivity(graph: TransportGraph) -> dict:
     """
     Vérifie que toutes les stations du réseau sont accessibles
@@ -222,10 +204,6 @@ def check_connectivity(graph: TransportGraph) -> dict:
     }
 
 
-# ─────────────────────────────────────────────────────────────
-# 5.  STATIONS DE CORRESPONDANCE
-# ─────────────────────────────────────────────────────────────
-
 def get_transfer_stations(graph: TransportGraph) -> list:
     """
     Identifie et retourne les stations de correspondance du réseau,
@@ -242,10 +220,6 @@ def get_transfer_stations(graph: TransportGraph) -> list:
     ]
     return sorted(result, key=lambda x: x[0])
 
-
-# ─────────────────────────────────────────────────────────────
-# 6.  AFFICHAGE — Fonctions utilitaires
-# ─────────────────────────────────────────────────────────────
 
 def display_bfs_result(result: dict, start: str, end: str) -> None:
     """Affiche le résultat d'un parcours BFS de façon lisible."""
@@ -331,10 +305,6 @@ def display_transfer_stations(transfers: list) -> None:
     print("═" * 55)
 
 
-# ─────────────────────────────────────────────────────────────
-# 7.  CHARGEMENT DEPUIS JSON (interface avec la Partie 1)
-# ─────────────────────────────────────────────────────────────
-
 import json
 import os
 
@@ -374,11 +344,6 @@ def load_graph_from_json(filepath: str) -> TransportGraph:
 
     return g
 
-
-# ─────────────────────────────────────────────────────────────
-# 8.  GRAPHE DE DÉMONSTRATION (réseau simplifié Paris)
-# ─────────────────────────────────────────────────────────────
-
 def build_demo_graph() -> TransportGraph:
     """
     Construit un petit réseau de démonstration inspiré du métro parisien.
@@ -409,11 +374,6 @@ def build_demo_graph() -> TransportGraph:
 
     return g
 
-
-# ─────────────────────────────────────────────────────────────
-# 9.  PROGRAMME PRINCIPAL
-# ─────────────────────────────────────────────────────────────
-
 def main():
     print("\n" + "╔" + "═" * 53 + "╗")
     print("║   APP — Partie 2 : Parcours du réseau              ║")
@@ -438,9 +398,7 @@ def main():
     print(f"  Réseau chargé : {len(graph.all_stations)} stations, "
           f"{len(graph.lines)} lignes.")
 
-    # ────────────────────────────────────────────────────────
-    #  2a. BFS — chemin avec le moins d'arrêts
-    # ────────────────────────────────────────────────────────
+
     print("\n\n── 2a. BFS (Breadth-First Search) ──────────────────────")
     bfs_start = "Argentine"
     bfs_end   = "Monceau"
@@ -448,9 +406,7 @@ def main():
     bfs_result = bfs(graph, bfs_start, bfs_end)
     display_bfs_result(bfs_result, bfs_start, bfs_end)
 
-    # ────────────────────────────────────────────────────────
-    #  2b. DFS — exploration en profondeur
-    # ────────────────────────────────────────────────────────
+  
     print("\n\n── 2b. DFS (Depth-First Search) ────────────────────────")
 
     # DFS avec cible
@@ -463,23 +419,15 @@ def main():
     dfs_full = dfs(graph, dfs_start)
     display_dfs_result(dfs_full, dfs_start)
 
-    # ────────────────────────────────────────────────────────
-    #  2c. Vérification de la connexité
-    # ────────────────────────────────────────────────────────
+    
     print("\n\n── 2c. Vérification de connexité ───────────────────────")
     connectivity = check_connectivity(graph)
     display_connectivity(connectivity)
-
-    # ────────────────────────────────────────────────────────
-    #  2d. Stations de correspondance
-    # ────────────────────────────────────────────────────────
+  
     print("\n\n── 2d. Stations de correspondance ──────────────────────")
     transfers = get_transfer_stations(graph)
     display_transfer_stations(transfers)
 
-    # ────────────────────────────────────────────────────────
-    #  Récapitulatif
-    # ────────────────────────────────────────────────────────
     print("\n\n── Récapitulatif ───────────────────────────────────────")
     print(f"  Stations totales          : {len(graph.all_stations)}")
     print(f"  Lignes                    : {len(graph.lines)}")
