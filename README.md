@@ -33,6 +33,7 @@ Lors de la première séance nous avons pris connaissance du sujet et des diffé
 - Rosalie :
 - Arthaud : 
 - Arthur : 
+
 Lors des séances suivantes, nous avons chacun travaillé sur notre code, puis nous avons mis en commun.
 
 ## Difficultés rencontrées 
