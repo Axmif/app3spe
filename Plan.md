@@ -76,3 +76,4 @@ Créer une interface graphique avec PyQt5
 
   
 ## Cas limites à gérer
+2 chemins ont la même longueur
