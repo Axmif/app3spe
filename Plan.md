@@ -67,7 +67,7 @@ Créer une interface graphique avec PyQt5
 - Mettre en évidence l'itinéraire calculé sur le graphe
 - Différencier les lignes par couleur
 
-### Optionnel : Gestion des perturbations
+### Optionnel : Gestion des perturbations (JULIE)
 - Permettre à l'utilisateur de fermer une station (travaux, incident) : le calculateur doit recalculer un itinéraire alternatif en excluant cette station du graphe
 - Permettre de fermer un tronçon entre deux stations consécutives (ligne interrompue entre deux arrêts)
 - Permettre de fermer une ligne entière (grève, maintenance prolongée)
