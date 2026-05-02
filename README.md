@@ -34,7 +34,7 @@ Pour utiliser ce programme:
 ## Structure du projet
 Lors de la première séance nous avons pris connaissance du sujet et des différentes tâches à réaliser. Nous nous sommes également répartis le travail de la manière suivante : 
 - Romain : 
-- Julie : Charger des données
+- Julie : Charger des données + gestion des perturbations
 - Sarah : Parcourir le réseau
 - Rosalie : Trouver le meilleur itinéraire (en implémentant l'algorithme de Dijkstra)
 - Arthaud : 
