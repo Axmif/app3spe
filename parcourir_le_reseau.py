@@ -220,7 +220,7 @@ def get_transfer_stations(graph: TransportGraph) -> list:
     ]
     return sorted(result, key=lambda x: x[0])
 
-
+# à enlever (partie 5 interface)
 def display_bfs_result(result: dict, start: str, end: str) -> None:
     """Affiche le résultat d'un parcours BFS de façon lisible."""
     print("\n" + "═" * 55)
@@ -247,7 +247,7 @@ def display_bfs_result(result: dict, start: str, end: str) -> None:
     print(f"\n  Stations visitées par BFS : {len(result['visited'])}")
     print("═" * 55)
 
-
+# à enlever (partie 5 interface)
 def display_dfs_result(result: dict, start: str, end: str = None) -> None:
     """Affiche le résultat d'un parcours DFS de façon lisible."""
     print("\n" + "═" * 55)
@@ -307,7 +307,7 @@ def display_transfer_stations(transfers: list) -> None:
 
 import json
 import os
-
+# à enlever (c'est la partie charger_donnees)
 def load_graph_from_json(filepath: str) -> TransportGraph:
     """
     Construit un TransportGraph à partir d'un fichier JSON
@@ -343,7 +343,7 @@ def load_graph_from_json(filepath: str) -> TransportGraph:
             g.transfers[transf["station"]].add(line)
 
     return g
-
+# pas besoin
 def build_demo_graph() -> TransportGraph:
     """
     Construit un petit réseau de démonstration inspiré du métro parisien.
