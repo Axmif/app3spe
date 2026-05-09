@@ -1,67 +1,103 @@
-import heapq
-
-def dijkstra(graphe, depart, arrivee):
+def dijkstra(G, source):
     """
-    Calcule le plus court chemin (en temps) entre deux stations
-    en utilisant l'algorithme de Dijkstra.
+    Algorithme de Dijkstra adapté aux réseaux de transport.
 
-    Paramètres :
-    ------------
-    graphe (dict) : dictionnaire représentant le graphe sous forme de liste d'adjacence.
-    depart (str) : nom de la station de départ
-    arrivee (str) : nom de la station d'arrivée
+    Chaque arête contient :
+    - temps de trajet
+    - ligne de transport
 
-    Retour :
-    --------
-    distances (dict) : dictionnaire des distances minimales depuis la station de départ
-    precedent (dict) : dictionnaire permettant de reconstruire le chemin
-    
+    Une correspondance coûte 120 secondes si changement de ligne.
     """
 
-    # Initialisation des distances : infini pour toutes les stations
-    distances = {station: float('inf') for station in graphe}
-    
-    # La distance de départ est nulle
-    distances[depart] = 0
+    # Distance minimale vers chaque station
+    distances = {x: float('inf') for x in G}
+    distances[source] = 0
 
-    # Dictionnaire pour reconstruire le chemin
-    precedent = {station: None for station in graphe}
+    # Permet de reconstruire le chemin
+    parents = {x: None for x in G}
 
-    # File de priorité (min-heap)
-    # Contient des tuples : (distance, station, ligne_actuelle)
-    file = [(0, depart, None)]
+    # Ligne utilisée pour atteindre chaque station
+    lignes = {x: None for x in G}
 
-    # Boucle principale de Dijkstra
-    while file:
-        # On récupère la station avec la plus petite distance
-        distance_actuelle, station_actuelle, ligne_actuelle = heapq.heappop(file)
+    # Ensemble des stations non traitées
+    non_visites = set(G)
 
-        # Si on arrive à la destination, on peut arrêter
-        if station_actuelle == arrivee:
-            break
+    while non_visites:
 
-        # Parcours des voisins de la station actuelle
-        for voisin, temps, ligne in graphe[station_actuelle]:
-            
-            # Calcul du temps de correspondance
-            correspondance = 0
-            if ligne_actuelle is not None and ligne != ligne_actuelle:
-                correspondance = 120  # Temps fixe de correspondance
+        # Choix du sommet avec distance minimale
+        u = min(non_visites, key=lambda x: distances[x])
 
-            # Nouvelle distance en passant par cette station
-            nouvelle_distance = distance_actuelle + temps + correspondance
+        # Exploration des voisins
+        for v in G[u]:
 
-            # Mise à jour si on trouve un chemin plus court
-            if nouvelle_distance < distances[voisin]:
-                distances[voisin] = nouvelle_distance
-                
-                # On mémorise le chemin (station précédente + ligne utilisée)
-                precedent[voisin] = (station_actuelle, ligne)
-                
-                # Ajout dans la file de priorité
-                heapq.heappush(file, (nouvelle_distance, voisin, ligne))
+            for temps, ligne in G[u][v]:
 
-    return distances, precedent
+                # Coût de base
+                cout = distances[u] + temps
 
+                # Ajout correspondance si changement de ligne
+                if lignes[u] is not None and lignes[u] != ligne:
+                    cout += 120
 
-# à suivre...
+                # Relaxation
+                if cout < distances[v]:
+                    distances[v] = cout
+                    parents[v] = (u, ligne)
+                    lignes[v] = ligne
+
+        non_visites.remove(u)
+
+    return distances, parents
+
+#---------------------------RECONSTRUCTION DU CHEMIN-----------------------------------------
+def reconstruire_chemin(parents, source, arrivee):
+    """
+    Reconstruit le chemin optimal entre deux stations.
+    """
+
+    chemin = []
+    courant = arrivee
+
+    while courant != source:
+        chemin.append(courant)
+        courant = parents[courant][0]
+
+    chemin.append(source)
+    chemin.reverse()
+
+    return chemin
+
+#-------------------------AFFICHAGE DE L'ITINERAIRE---------------------------------------
+def afficher_itineraire(chemin, parents, distances):
+    """
+    Affiche un itinéraire lisible :
+    - lignes utilisées
+    - correspondances
+    - stations
+    - temps total
+    """
+
+    print("\n🚇 ITINÉRAIRE OPTIMAL\n")
+
+    ligne_actuelle = None
+
+    for i in range(len(chemin) - 1):
+
+        station = chemin[i]
+        suivante = chemin[i + 1]
+
+        ligne = parents[suivante][1]
+
+        # Détection de correspondance
+        if ligne_actuelle is None:
+            print(f"➡️ Prendre la ligne {ligne} à {station}")
+
+        elif ligne != ligne_actuelle:
+            print(f"🔁 Correspondance à {station} (ligne {ligne_actuelle} → {ligne})")
+
+        print(f"   {station} → {suivante} (ligne {ligne})")
+
+        ligne_actuelle = ligne
+
+    print(f"\n🏁 Arrivée à {chemin[-1]}")
+    print(f"⏱ Temps total : {distances[chemin[-1]]} secondes\n")
