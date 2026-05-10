@@ -1,4 +1,8 @@
 import matplotlib.patches as mpatches
+import sys
+import networkx as nx
+import matplotlib.pyplot as plt
+from charger_donnees import charger_reseau, construire_graphe
 
 # ── Couleurs par ligne ────────────────────────────────────────────
 PALETTE      = ["#1565C0","#C62828","#AD1457","#6A1B9A","#E65100","#00838F","#F9A825","#4E342E"]
