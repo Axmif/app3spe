@@ -69,7 +69,7 @@ def fermer_ligne_entiere(graphe, ligne):
             arete for arete in graphe_modifie[station]
             if arete["ligne"] != ligne
             ]
-        return graphe_modifie
+    return graphe_modifie
 
 def comparer_temps_trajet(graphe, depart, arrivee, graphe_perturbe):
     """
