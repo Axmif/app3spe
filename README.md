@@ -17,6 +17,7 @@ Rosalie (user1-r0) : Barreur
 - meilleur_itineraire.py
 - generalisation.py
 - interface.py
+- visualisation_graphe.py
 - gestion_des_perturbations.py
 
   
