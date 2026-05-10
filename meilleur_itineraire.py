@@ -1,49 +1,70 @@
 def dijkstra(G, source):
     """
-    Algorithme de Dijkstra adapté aux réseaux de transport.
+    Algorithme de Dijkstra pour le réseau de transport.
 
-    Chaque arête contient :
-    - temps de trajet
-    - ligne de transport
+    G est une liste d'adjacence :
+    {
+        station: [
+            {
+                "voisin": str,
+                "temps": int,
+                "ligne": str
+            }
+        ]
+    }
+    Atention: cette version de dijkstra peut: ajouter des correspondances inutiles,
+    ou oublier des correspondances,
+    donc donner un faux plus court chemin
 
-    Une correspondance coûte 120 secondes si changement de ligne.
+    Retourne
+    -------
+    un tuple (distances, parents):
+    distances: dictionnaire {station: temps minimal depuis la station de départ}
+    parents: dictionnaire {station: (station précédente, ligne)}
+
     """
 
-    # Distance minimale vers chaque station
-    distances = {x: float('inf') for x in G}
+    distances = {station: float("inf") for station in G}
     distances[source] = 0
 
-    # Permet de reconstruire le chemin
-    parents = {x: None for x in G}
+    parents = {station: None for station in G}
 
-    # Ligne utilisée pour atteindre chaque station
-    lignes = {x: None for x in G}
+    # Ligne utilisée pour arriver à la station
+    lignes = {station: None for station in G}
 
-    # Ensemble des stations non traitées
     non_visites = set(G)
 
     while non_visites:
 
-        # Choix du sommet avec distance minimale
+        # Sommet avec la plus petite distance
         u = min(non_visites, key=lambda x: distances[x])
 
-        # Exploration des voisins
-        for v in G[u]:
+        # Si inaccessible
+        if distances[u] == float("inf"):
+            break
 
-            for temps, ligne in G[u][v]:
+        # Parcours des voisins
+        for arete in G[u]:
 
-                # Coût de base
-                cout = distances[u] + temps
+            v = arete["voisin"]
+            temps = arete["temps"]
+            ligne = arete["ligne"]
 
-                # Ajout correspondance si changement de ligne
-                if lignes[u] is not None and lignes[u] != ligne:
-                    cout += 120
+            cout = distances[u] + temps
 
-                # Relaxation
-                if cout < distances[v]:
-                    distances[v] = cout
-                    parents[v] = (u, ligne)
-                    lignes[v] = ligne
+            # Correspondance
+            if lignes[u] is not None and lignes[u] != ligne:
+                cout += 120
+
+            # Relaxation
+            if cout < distances[v]:
+
+                distances[v] = cout
+
+                # Parent + ligne utilisée
+                parents[v] = (u, ligne)
+
+                lignes[v] = ligne
 
         non_visites.remove(u)
 
@@ -54,6 +75,10 @@ def reconstruire_chemin(parents, source, arrivee):
     """
     Reconstruit le chemin optimal entre deux stations.
     """
+
+    # si dijkstra ne trouve pas de chemin
+    if parents[arrivee] is None and source != arrivee:
+        return None
 
     chemin = []
     courant = arrivee
