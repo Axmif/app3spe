@@ -1,7 +1,6 @@
 """
 =============================================================
 Contenu :
-  - Classe TransportGraph : structure de données (liste d'adjacence)
   - BFS : chemin avec le moins d'arrêts
   - DFS : exploration en profondeur
   - Vérification de la connexité du réseau
@@ -9,62 +8,23 @@ Contenu :
 =============================================================
 """
 
-from collections import defaultdict, deque
+from collections import deque
+from charger_donnees import charger_reseau
 
-class TransportGraph:
-    """
-    Graphe pondéré représentant un réseau de transport en commun.
 
-    Attributs
-    ---------
-    adjacency : dict  { station : [(voisin, poids, ligne), ...] }
-    lines     : dict  { nom_ligne : [stations ordonnées] }
-    transfers : dict  { station : [lignes desservies] }
-    """
 
-    def __init__(self):
-        self.adjacency = defaultdict(list)   # liste d'adjacence
-        self.lines     = {}                  # lignes et leurs stations
-        self.transfers = defaultdict(set)    # station → ensemble de lignes
-
-    # ── Ajout d'une connexion (arc orienté dans les deux sens) ──
-    def add_connection(self, station_a: str, station_b: str,
-                       weight: int, line: str) -> None:
-        """Ajoute une connexion bidirectionnelle entre deux stations."""
-        self.adjacency[station_a].append((station_b, weight, line))
-        self.adjacency[station_b].append((station_a, weight, line))
-
-    # ── Enregistrement d'une ligne ──────────────────────────────
-    def add_line(self, line_name: str, stations: list) -> None:
-        """Enregistre les stations d'une ligne et met à jour les correspondances."""
-        self.lines[line_name] = stations
-        for station in stations:
-            self.transfers[station].add(line_name)
-
-    # ── Propriétés utiles ───────────────────────────────────────
-    @property
-    def all_stations(self) -> list:
-        """Retourne la liste de toutes les stations du réseau."""
-        return list(self.adjacency.keys())
-
-    @property
-    def transfer_stations(self) -> list:
-        """Retourne les stations desservies par au moins deux lignes."""
-        return [s for s, lines in self.transfers.items() if len(lines) >= 2]
-      
-
-def bfs(graph: TransportGraph, start: str, end: str) -> dict:
+def bfs(graphe, depart, arrivee):
     """
     Parcours en largeur (Breadth-First Search).
 
     Trouve le chemin passant par le MOINS D'ARRÊTS entre
-    `start` et `end`, sans tenir compte des poids.
+    `depart` et `arrivee`, sans tenir compte des poids.
 
     Paramètres
     ----------
-    graph : TransportGraph
-    start : station de départ
-    end   : station d'arrivée
+    graphe : dictionnaire
+    depart : station de départ
+    arrivee  : station d'arrivée
 
     Retourne
     --------
@@ -74,49 +34,67 @@ def bfs(graph: TransportGraph, start: str, end: str) -> dict:
       'visited'     : liste de toutes les stations visitées (ordre BFS)
       'found'       : booléen
     """
-    if start not in graph.adjacency:
-        raise ValueError(f"Station de départ inconnue : '{start}'")
-    if end not in graph.adjacency:
-        raise ValueError(f"Station d'arrivée inconnue : '{end}'")
 
-    # File : chaque élément = (station_courante, chemin_parcouru)
-    queue    = deque([(start, [start])])
-    visited  = set([start])
-    bfs_order = []           # ordre de visite pour affichage pédagogique
+    if depart not in graphe:
+        raise ValueError(f"Station inconnue : {depart}")
 
-    while queue:
-        current, path = queue.popleft()
-        bfs_order.append(current)
+    if arrivee not in graphe:
+        raise ValueError(f"Station inconnue : {arrivee}")
 
-        if current == end:
+    file = deque([(depart, [depart])])
+
+    visites = set([depart])
+
+    ordre_visite = []
+
+    while file:
+
+        station, chemin = file.popleft()
+
+        ordre_visite.append(station)
+
+        # Arrivée trouvée
+        if station == arrivee:
+
             return {
-                'path'    : path,
-                'stops'   : len(path) - 2,   # sans départ ni arrivée
-                'visited' : bfs_order,
-                'found'   : True,
+                "path": chemin,
+                "stops": len(chemin) - 2,
+                "visited": ordre_visite,
+                "found": True
             }
 
-        for neighbor, _weight, _line in graph.adjacency[current]:
-            if neighbor not in visited:
-                visited.add(neighbor)
-                queue.append((neighbor, path + [neighbor]))
+        # Parcours des voisins
+        for arete in graphe[station]:
 
-    return {'path': [], 'stops': -1, 'visited': bfs_order, 'found': False}
+            voisin = arete["voisin"]
+
+            if voisin not in visites:
+
+                visites.add(voisin)
+
+                file.append((voisin, chemin + [voisin]))
+
+    return {
+        "path": [],
+        "stops": -1,
+        "visited": ordre_visite,
+        "found": False
+    }
 
 
-def dfs(graph: TransportGraph, start: str, end: str = None) -> dict:
+def dfs(graphe, depart, arrivee=None):
     """
     Parcours en profondeur (Depth-First Search).
 
-    Si `end` est fourni, s'arrête dès que la station est trouvée
+    Si `arrivee` est fourni, s'arrête dès que la station est trouvée
     et retourne le chemin. Sinon, explore tout le graphe accessible
-    depuis `start`.
+    depuis `depart`.
 
     Paramètres
     ----------
-    graph : TransportGraph
-    start : station de départ
-    end   : (optionnel) station cible
+    graphe : dictionnaire
+    depart : station de départ
+    arrivee   : (optionnel) station cible
 
     Retourne
     --------
@@ -125,39 +103,54 @@ def dfs(graph: TransportGraph, start: str, end: str = None) -> dict:
       'visited' : liste de toutes les stations visitées (ordre DFS)
       'found'   : booléen (False si end=None car pas de cible)
     """
-    if start not in graph.adjacency:
-        raise ValueError(f"Station de départ inconnue : '{start}'")
 
-    visited   = set()
-    dfs_order = []
+    if depart not in graphe:
+        raise ValueError(f"Station inconnue : {depart}")
 
-    # ── Version récursive ────────────────────────────────────
-    def _dfs_recursive(node: str, path: list) -> list | None:
-        visited.add(node)
-        dfs_order.append(node)
+    visites = set()
 
-        if node == end:
-            return path
+    ordre_visite = []
 
-        for neighbor, _weight, _line in graph.adjacency[node]:
-            if neighbor not in visited:
-                result = _dfs_recursive(neighbor, path + [neighbor])
-                if result is not None:
-                    return result
+    def parcours(station, chemin):
 
-        return None  # cible non trouvée sur cette branche
+        visites.add(station)
 
-    result_path = _dfs_recursive(start, [start])
+        ordre_visite.append(station)
 
-    if end is None:
-        return {'path': [], 'visited': dfs_order, 'found': False}
+        # Arrivée trouvée
+        if station == arrivee:
+            return chemin
 
-    if result_path:
-        return {'path': result_path, 'visited': dfs_order, 'found': True}
-    else:
-        return {'path': [], 'visited': dfs_order, 'found': False}
+        for arete in graphe[station]:
 
-def check_connectivity(graph: TransportGraph) -> dict:
+            voisin = arete["voisin"]
+
+            if voisin not in visites:
+
+                resultat = parcours(voisin, chemin + [voisin])
+
+                if resultat is not None:
+                    return resultat
+
+        return None
+
+    chemin = parcours(depart, [depart])
+
+    if arrivee is None:
+
+        return {
+            "path": [],
+            "visited": ordre_visite,
+            "found": False
+        }
+
+    return {
+        "path": chemin if chemin else [],
+        "visited": ordre_visite,
+        "found": chemin is not None
+    }
+
+def verifier_connexite(graphe):
     """
     Vérifie que toutes les stations du réseau sont accessibles
     depuis n'importe quelle autre station (graphe connexe).
@@ -173,52 +166,74 @@ def check_connectivity(graph: TransportGraph) -> dict:
       'total_count'      : nombre total de stations
       'unreachable'      : liste des stations inaccessibles ([] si connexe)
     """
-    stations = graph.all_stations
+
+    stations = list(graphe.keys())
+
     if not stations:
+
         return {
-            'is_connected'    : True,
-            'reachable_count' : 0,
-            'total_count'     : 0,
-            'unreachable'     : [],
+            "is_connected": True,
+            "reachable_count": 0,
+            "total_count": 0,
+            "unreachable": []
         }
 
-    # BFS depuis la première station
-    start    = stations[0]
-    visited  = {start}
-    queue    = deque([start])
+    depart = stations[0]
 
-    while queue:
-        current = queue.popleft()
-        for neighbor, _w, _l in graph.adjacency[current]:
-            if neighbor not in visited:
-                visited.add(neighbor)
-                queue.append(neighbor)
+    visites = set([depart])
 
-    unreachable = [s for s in stations if s not in visited]
+    file = deque([depart])
+
+    while file:
+
+        station = file.popleft()
+
+        for arete in graphe[station]:
+
+            voisin = arete["voisin"]
+
+            if voisin not in visites:
+
+                visites.add(voisin)
+
+                file.append(voisin)
+
+    inaccessibles = [
+        s for s in stations
+        if s not in visites
+    ]
 
     return {
-        'is_connected'    : len(unreachable) == 0,
-        'reachable_count' : len(visited),
-        'total_count'     : len(stations),
-        'unreachable'     : unreachable,
+        "is_connected": len(inaccessibles) == 0,
+        "reachable_count": len(visites),
+        "total_count": len(stations),
+        "unreachable": inaccessibles
     }
 
 
-def get_transfer_stations(graph: TransportGraph) -> list:
+def get_transfer_stations(reseau):
     """
     Identifie et retourne les stations de correspondance du réseau,
     c'est-à-dire les stations desservies par au moins deux lignes.
 
     Retourne
     --------
-    Liste de tuples (station, frozenset(lignes)) triée par nom de station.
+    Liste de tuples (station, lignes) triée par nom de station.
     """
-    result = [
-        (station, frozenset(lines))
-        for station, lines in graph.transfers.items()
-        if len(lines) >= 2
-    ]
-    return sorted(result, key=lambda x: x[0])
+
+    resultats = []
+
+    for correspondance in reseau["correspondances"]:
+
+        station = correspondance["station"]
+
+        lignes = correspondance["lignes"]
+
+        resultats.append(
+            (station, lignes)
+        )
+
+    return sorted(resultats)
 
 # à enlever (partie 5 interface)
 def display_bfs_result(result: dict, start: str, end: str) -> None:
@@ -305,136 +320,27 @@ def display_transfer_stations(transfers: list) -> None:
     print("═" * 55)
 
 
-import json
-import os
-# à enlever (c'est la partie charger_donnees)
-def load_graph_from_json(filepath: str) -> TransportGraph:
-    """
-    Construit un TransportGraph à partir d'un fichier JSON
-    au format défini dans le cahier des charges :
-      {
-        "lignes": { "L1": {"nom": "...", "couleur": "...",
-                           "stations": [...]} },
-        "connexions": [{"depart": "...", "arrivee": "...",
-                        "temps": 90, "ligne": "L1"}, ...],
-        "correspondances": [{"station": "...", "lignes": [...],
-                             "temps": 120}, ...]
-      }
-    """
-    with open(filepath, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    g = TransportGraph()
-
-    # ── Lignes ──────────────────────────────────────────────
-    for line_id, info in data.get("lignes", {}).items():
-        g.add_line(line_id, info["stations"])
-
-    # ── Connexions ──────────────────────────────────────────
-    for conn in data.get("connexions", []):
-        g.add_connection(
-            conn["depart"], conn["arrivee"],
-            conn["temps"],  conn["ligne"]
-        )
-
-    # ── Correspondances (enrichissement des transfers) ──────
-    for transf in data.get("correspondances", []):
-        for line in transf["lignes"]:
-            g.transfers[transf["station"]].add(line)
-
-    return g
-# pas besoin
-def build_demo_graph() -> TransportGraph:
-    """
-    Construit un petit réseau de démonstration inspiré du métro parisien.
-
-    Ligne 1  :  Argentine — Charles de Gaulle-Étoile — George V — Franklin Roosevelt
-    Ligne 2  :  Charles de Gaulle-Étoile — Ternes — Courcelles — Monceau
-    Ligne 6  :  Charles de Gaulle-Étoile — Kléber — Boissière
-    """
-    g = TransportGraph()
-
-    # ── Ligne 1 ─────────────────────────────────────────────
-    g.add_line("1", ["Argentine", "Charles de Gaulle-Étoile",
-                      "George V", "Franklin Roosevelt"])
-    g.add_connection("Argentine",                 "Charles de Gaulle-Étoile", 90,  "1")
-    g.add_connection("Charles de Gaulle-Étoile",  "George V",                 60,  "1")
-    g.add_connection("George V",                  "Franklin Roosevelt",        75,  "1")
-
-    # ── Ligne 2 ─────────────────────────────────────────────
-    g.add_line("2", ["Charles de Gaulle-Étoile", "Ternes", "Courcelles", "Monceau"])
-    g.add_connection("Charles de Gaulle-Étoile",  "Ternes",     80, "2")
-    g.add_connection("Ternes",                    "Courcelles", 70, "2")
-    g.add_connection("Courcelles",                "Monceau",    65, "2")
-
-    # ── Ligne 6 ─────────────────────────────────────────────
-    g.add_line("6", ["Charles de Gaulle-Étoile", "Kléber", "Boissière"])
-    g.add_connection("Charles de Gaulle-Étoile",  "Kléber",    55, "6")
-    g.add_connection("Kléber",                    "Boissière", 60, "6")
-
-    return g
-
-def main():
-    print("\n" + "╔" + "═" * 53 + "╗")
-    print("║   APP — Partie 2 : Parcours du réseau              ║")
-    print("╚" + "═" * 53 + "╝")
-
-    # ── Chargement du graphe ─────────────────────────────────
-    # Essaie d'abord un vrai fichier JSON ; sinon, utilise la démo
-    json_candidates = ["paris.json", "data/paris.json"]
-    graph = None
-
-    for path in json_candidates:
-        if os.path.exists(path):
-            print(f"\n   Chargement de : {path}")
-            graph = load_graph_from_json(path)
-            break
-
-    if graph is None:
-        print("\n    Aucun fichier JSON trouvé.")
-        print("      Utilisation du réseau de démonstration (Paris simplifié).\n")
-        graph = build_demo_graph()
-
-    print(f"  Réseau chargé : {len(graph.all_stations)} stations, "
-          f"{len(graph.lines)} lignes.")
-
-
-    print("\n\n── 2a. BFS (Breadth-First Search) ──────────────────────")
-    bfs_start = "Argentine"
-    bfs_end   = "Monceau"
-
-    bfs_result = bfs(graph, bfs_start, bfs_end)
-    display_bfs_result(bfs_result, bfs_start, bfs_end)
-
-  
-    print("\n\n── 2b. DFS (Depth-First Search) ────────────────────────")
-
-    # DFS avec cible
-    dfs_start  = "Argentine"
-    dfs_end    = "Boissière"
-    dfs_result = dfs(graph, dfs_start, dfs_end)
-    display_dfs_result(dfs_result, dfs_start, dfs_end)
-
-    # DFS exploration complète (sans cible)
-    dfs_full = dfs(graph, dfs_start)
-    display_dfs_result(dfs_full, dfs_start)
-
-    
-    print("\n\n── 2c. Vérification de connexité ───────────────────────")
-    connectivity = check_connectivity(graph)
-    display_connectivity(connectivity)
-  
-    print("\n\n── 2d. Stations de correspondance ──────────────────────")
-    transfers = get_transfer_stations(graph)
-    display_transfer_stations(transfers)
-
-    print("\n\n── Récapitulatif ───────────────────────────────────────")
-    print(f"  Stations totales          : {len(graph.all_stations)}")
-    print(f"  Lignes                    : {len(graph.lines)}")
-    print(f"  Stations de correspondance: {len(transfers)}")
-    print(f"  Réseau connexe            : {'Oui' if connectivity['is_connected'] else 'Non ❌'}")
-    print()
-
-
 if __name__ == "__main__":
-    main()
+    reseau = charger_reseau("bordeaux.json")
+    graphe = reseau["graphe"]
+    resultat = bfs(
+    graphe,
+    "Quinconces",
+    "Pessac Bersol"
+)
+
+    print(resultat)
+
+    resultat = dfs(
+    graphe,
+    "Quinconces",
+    "Floirac Dravemont"
+)
+
+    print(resultat)
+
+    connectivite = verifier_connexite(graphe)
+    print(connectivite)
+
+    transfers = get_transfer_stations(reseau)
+    print(transfers)
