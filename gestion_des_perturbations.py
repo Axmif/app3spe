@@ -19,6 +19,24 @@ def fermer_station(graphe, station):
     """
     Ferme une station du réseau. 
     Recalcule un itinéraire alternatif en excluant cette station du graphe.
+
+    Paramètres
+    ----------
+    graphe: graphe sous forme de dictionnaire python au format :
+    {
+        station: [
+            {
+                "voisin": str,
+                "temps": int,
+                "ligne": str
+            }
+        ]
+    }
+    station: nom de la station à supprimer du graphe (str)
+
+    Retourne
+    --------
+    graphe_modifie: le graphe modifié sous forme de dictionnaire python
     """
     graphe_modifie = copy.deepcopy(graphe)
 
@@ -40,6 +58,25 @@ def fermer_tronçon(graphe, station1, station2):
     """
     Permet de fermer un tronçon entre deux stations consécutives (ligne
     interrompue entre deux arrêts)
+
+    Paramètres
+    ----------
+    graphe: graphe sous forme de dictionnaire python au format :
+    {
+        station: [
+            {
+                "voisin": str,
+                "temps": int,
+                "ligne": str
+            }
+        ]
+    }
+    station1: nom de la première station (str)
+    station2: nom de la deuxième station (str)
+
+    Retourne
+    --------
+    graphe_modifie: le graphe modifié sous forme de dictionnaire python
     """
     graphe_modifie = copy.deepcopy(graphe)
 
@@ -58,6 +95,26 @@ def fermer_tronçon(graphe, station1, station2):
 def fermer_ligne_entiere(graphe, ligne):
     """
     Permet de fermer une ligne entière.
+
+    Paramètres
+    ----------
+    Paramètres
+    ----------
+    graphe: graphe sous forme de dictionnaire python au format :
+    {
+        station: [
+            {
+                "voisin": str,
+                "temps": int,
+                "ligne": str
+            }
+        ]
+    }
+    ligne: nom de la ligne à supprimer du graphe (str)
+
+    Retourne
+    --------
+    graphe_modifie: le graphe modifié sous forme de dictionnaire python
     """
     graphe_modifie = copy.deepcopy(graphe)
     
