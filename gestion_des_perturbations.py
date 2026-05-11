@@ -54,7 +54,7 @@ def fermer_station(graphe, station):
     return graphe_modifie
 
 
-def fermer_tronçon(graphe, station1, station2):
+def fermer_troncon(graphe, station1, station2):
     """
     Permet de fermer un tronçon entre deux stations consécutives (ligne
     interrompue entre deux arrêts)
@@ -138,6 +138,9 @@ def comparer_temps_trajet(graphe, depart, arrivee, graphe_perturbe):
 
     trajet_normal = dist_normale[arrivee]
     trajet_perturbe = dist_perturbe[arrivee]
+
+    if trajet_normal != trajet_perturbe:
+        print("⚠️ Le trajet est impacté par une perturbation.")
 
     return (
         f"Temps de trajet normal : {trajet_normal} s\n"
