@@ -2,7 +2,7 @@ import matplotlib.patches as mpatches
 import sys
 import networkx as nx
 import matplotlib.pyplot as plt
-from charger_donnees import charger_reseau, construire_graphe
+from charger_donnees import charger_reseau
 
 # ── Couleurs par ligne ────────────────────────────────────────────
 PALETTE      = ["#1565C0","#C62828","#AD1457","#6A1B9A","#E65100","#00838F","#F9A825","#4E342E"]
@@ -30,6 +30,19 @@ def graphe_vers_networkx(graphe, data):
 
 
 def visualiser_graphe(G, data, itineraire=None):
+    # (compat) garde l’API historique pour lancement standalone
+    fig, ax, _pos = construire_figure(G, data, itineraire=itineraire)
+    plt.show()
+
+
+def construire_figure(G, data, itineraire=None, pos=None, show_legend=True):
+    """
+    Construit (fig, ax, pos) pour intégration dans une interface (Qt, Tkinter, etc).
+
+    - Ne fait PAS de plt.show()
+    - Ne fait PAS de plt.savefig()
+    - show_legend : affiche ou masque la boîte de légende
+    """
     lignes   = data["lignes"]
     couleurs = {lid: PALETTE[i % len(PALETTE)] for i, lid in enumerate(sorted(lignes))}
     n        = G.number_of_nodes()
@@ -43,8 +56,9 @@ def visualiser_graphe(G, data, itineraire=None):
     ax.set_facecolor("#F5F0E8")
     fig.patch.set_facecolor("#F5F0E8")
 
-    pos = (nx.kamada_kawai_layout(G) if n <= 30
-           else nx.spring_layout(G, seed=42, k=2.5/n**0.5, iterations=150))
+    if pos is None:
+        pos = (nx.kamada_kawai_layout(G) if n <= 30
+               else nx.spring_layout(G, seed=42, k=2.5/n**0.5, iterations=150))
 
     # Arêtes colorées par ligne
     for lid, col in couleurs.items():
@@ -78,33 +92,34 @@ def visualiser_graphe(G, data, itineraire=None):
             bbox=dict(boxstyle="round,pad=0.15", fc="#F5F0E8", ec="none", alpha=0.8))
 
     # Légende
-    patches = [mpatches.Patch(color=HUB_COLOR,    label="Correspondance"),
-               mpatches.Patch(color=SIMPLE_COLOR, label="Station")]
-    if itineraire:
-        patches += [mpatches.Patch(color="#FFD600", label="Itinéraire"),
-                    mpatches.Patch(color="#00C853", label=f"Départ : {itineraire[0]}"),
-                    mpatches.Patch(color="#D50000", label=f"Arrivée : {itineraire[-1]}")]
-    for lid, col in sorted(couleurs.items()):
-        patches.append(mpatches.Patch(color=col, label=lignes[lid].get("nom", f"Ligne {lid}")))
-    ax.legend(handles=patches, loc="upper left", fontsize=8,
-              title="Légende", framealpha=0.9, edgecolor="#ccc")
+    if show_legend:
+        patches = [mpatches.Patch(color=HUB_COLOR,    label="Correspondance"),
+                   mpatches.Patch(color=SIMPLE_COLOR, label="Station")]
+        if itineraire:
+            patches += [mpatches.Patch(color="#FFD600", label="Itinéraire"),
+                        mpatches.Patch(color="#00C853", label=f"Départ : {itineraire[0]}"),
+                        mpatches.Patch(color="#D50000", label=f"Arrivée : {itineraire[-1]}")]
+        for lid, col in sorted(couleurs.items()):
+            patches.append(mpatches.Patch(color=col, label=lignes[lid].get("nom", f"Ligne {lid}")))
+        ax.legend(handles=patches, loc="upper left", fontsize=8,
+                  title="Légende", framealpha=0.9, edgecolor="#ccc")
 
     nom = data.get("nom", "Réseau")
     ax.set_title(f"Réseau — {nom}  ({n} stations · {G.number_of_edges()} connexions)",
                  fontsize=13, fontweight="bold", pad=12)
     ax.axis("off")
     plt.tight_layout()
-    plt.savefig(f"graphe_{nom.lower().replace(' ','_')}.png", dpi=150, bbox_inches="tight")
-    plt.show()
+
+    return fig, ax, pos
 
 
 # ── Point d'entrée ────────────────────────────────────────────────
 if __name__ == "__main__":
     fichier = sys.argv[1] if len(sys.argv) > 1 else "bordeaux.json"
-    data    = charger_reseau(fichier)
-    graphe  = construire_graphe(data)              # liste d'adjacence (ton format)
-    G       = graphe_vers_networkx(graphe, data)   # conversion pour visualisation
-    visualiser_graphe(G, data)
+    reseau = charger_reseau(fichier)
+    graphe = reseau["graphe"]                      # déjà au bon format (liste d'adjacence)
+    G      = graphe_vers_networkx(graphe, reseau)  # conversion pour visualisation
+    visualiser_graphe(G, reseau)
 
     # Itinéraire : décommenter pour tester
     # visualiser_graphe(G, data, itineraire=["Quinconces", "Victoire", "Gare Saint-Jean"])²

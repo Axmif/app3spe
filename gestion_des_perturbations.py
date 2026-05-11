@@ -117,15 +117,13 @@ def fermer_ligne_entiere(graphe, ligne):
     graphe_modifie: le graphe modifié sous forme de dictionnaire python
     """
     graphe_modifie = copy.deepcopy(graphe)
-    
-    if ligne in graphe_modifie:
-        del graphe_modifie[ligne]
-    
+
     for station in graphe_modifie:
         graphe_modifie[station] = [
-            arete for arete in graphe_modifie[station]
-            if arete["ligne"] != ligne
-            ]
+            arete
+            for arete in graphe_modifie[station]
+            if arete.get("ligne") != ligne
+        ]
     return graphe_modifie
 
 def comparer_temps_trajet(graphe, depart, arrivee, graphe_perturbe):
