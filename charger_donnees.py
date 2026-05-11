@@ -1,10 +1,16 @@
 import json
-import networkx as nx
-import matplotlib.pyplot as plt
 
 def charger_json(fichier):
     """
     Charge un fichier JSON et retourne un dictionnaire Python.
+
+    Paramètres
+    ---------
+    fichier: un fichier json
+
+    Retourne
+    --------
+    data: Contenu du fichier JSON sous forme de dictionnaire Python.
     """
     with open(fichier, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -26,6 +32,16 @@ def construire_graphe(data):
             }
         ]
     }
+
+    Paramètres
+    ----------
+    data: dictionnaire contenant les informations du réseau de tansport d'une ville
+
+    Retourne
+    --------
+    graphe: dictionnaire python. Graphe représentant le réseau sous forme de liste d'adjacence.
+        Chaque station est associée à une liste de connexions vers
+        ses stations voisines, le temps et la ligne associée
     """
 
     graphe = {}
@@ -70,7 +86,21 @@ def construire_graphe(data):
 
 def charger_reseau(fichier):
     """
-    Charge entièrement un réseau.
+    Charge entièrement un réseau de transport depuis un fichier json.
+
+    Paramètres
+    ---------
+    fichier: un ficher json
+
+    Retourne
+    --------
+    reseau : 
+        Dictionnaire contenant :
+        - le nom du réseau,
+        - le graphe des stations,
+        - les lignes du réseau,
+        - les correspondances,
+        - le temps moyen entre stations.
     """
 
     data = charger_json(fichier)
@@ -85,16 +115,6 @@ def charger_reseau(fichier):
 
     return reseau
 
-# fonction pour tester pour l'instant (c'est probablement la partie 6)
-def montrer_graphe(fichier):
-    G = construire_graphe(fichier)
-    positions = nx.spring_layout(G, seed=42)
-    nx.draw(G, positions, with_labels=True,
-            node_color='lightblue', node_size=800, font_weight='bold')
-    # Etiquettes de temps
-    temps = nx.get_edge_attributes(G, 'weight')
-    nx.draw_networkx_edge_labels(G, positions, edge_labels=temps)
-    plt.show()
 
 if __name__ == "__main__":
 
