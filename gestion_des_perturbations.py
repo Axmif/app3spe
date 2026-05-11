@@ -130,20 +130,38 @@ def fermer_ligne_entiere(graphe, ligne):
 
 def comparer_temps_trajet(graphe, depart, arrivee, graphe_perturbe):
     """
-    Comparer le temps de trajet normal vs le temps avec perturbation pour
-    quantifier l'impact sur le voyageur
+    Compare le temps de trajet normal et le temps
+    avec perturbation.
     """
-    dist_normale, _ = dijkstra(graphe, depart, arrivee)
-    dist_perturbe, _ = dijkstra(graphe_perturbe, depart, arrivee)
+
+    # Dijkstra sur le graphe normal
+    dist_normale, _ = dijkstra(graphe, depart)
+
+    # Dijkstra sur le graphe perturbé
+    dist_perturbe, _ = dijkstra(graphe_perturbe, depart)
 
     trajet_normal = dist_normale[arrivee]
     trajet_perturbe = dist_perturbe[arrivee]
 
-    if trajet_normal != trajet_perturbe:
-        print("⚠️ Le trajet est impacté par une perturbation.")
+    # Cas où aucun chemin n'existe
+    if trajet_perturbe == float("inf"):
+        return (
+            "⚠️ Aucun itinéraire disponible à cause de la perturbation.\n"
+            f"Temps normal : {trajet_normal} s"
+        )
 
-    return (
+    message = ""
+
+    # Message d'avertissement
+    if trajet_normal != trajet_perturbe:
+        message += "⚠️ Le trajet est impacté par une perturbation.\n"
+
+    impact = trajet_perturbe - trajet_normal
+
+    message += (
         f"Temps de trajet normal : {trajet_normal} s\n"
         f"Temps avec perturbation : {trajet_perturbe} s\n"
-        f"Impact : +{trajet_perturbe - trajet_normal} s"
+        f"Impact : +{impact} s"
     )
+
+    return message
