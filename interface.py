@@ -167,6 +167,62 @@ def _attach_mpl_wheel_navigation(canvas, ax) -> None:
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        self.setStyleSheet("""
+QWidget {
+    color: #e8edf3;
+    font-size: 12px;
+}
+
+QPushButton {
+    background-color: #1a2535;
+    border: 1px solid #2e4060;
+    padding: 6px;
+    border-radius: 4px;
+}
+
+QPushButton:hover {
+    background-color: #24344a;
+}
+
+QComboBox {
+    background-color: #1a2535;
+    border: 1px solid #2e4060;
+    padding: 4px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #1a2535;
+    selection-background-color: #00c9a7;
+}
+
+QListWidget {
+    background-color: #1a2535;
+    border: 1px solid #2e4060;
+}
+
+QTabWidget::pane {
+    border: 1px solid #2e4060;
+    background: #0f1923;
+}
+
+QTabBar::tab {
+    background: #1a2535;
+    color: #e8edf3;
+    padding: 8px 14px;
+    border: 1px solid #2e4060;
+    border-bottom: none;
+}
+
+QTabBar::tab:selected {
+    background: #24344a;
+    color: #00c9a7;
+}
+
+QTabBar::tab:hover {
+    background: #2b3d55;
+}
+""")
         self.setWindowTitle("Réseau de Transport — Navigation")
         self.resize(1200, 780)
         self.setMinimumSize(960, 620)
@@ -735,6 +791,7 @@ def main():
         app = QApplication(sys.argv)
     else:
         app = QApplication(sys.argv)
+    app.setStyle("Fusion")
     w = MainWindow()
     w.show()
     sys.exit(app.exec() if _QT == 6 else app.exec_())
