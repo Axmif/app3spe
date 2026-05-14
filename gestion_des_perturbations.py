@@ -130,6 +130,37 @@ def comparer_temps_trajet(graphe, depart, arrivee, graphe_perturbe):
     """
     Compare le temps de trajet normal et le temps
     avec perturbation.
+
+    Paramètres
+    ----------
+    graphe: graphe sous forme de dictionnaire python au format :
+    {
+        station: [
+            {
+                "voisin": str,
+                "temps": int,
+                "ligne": str
+            }
+        ]
+    }
+
+    graphe_perturbe: graphe auquel on a appliqué les perturbations, 
+    sous forme de dictionnaire python au format :
+    {
+        station: [
+            {
+                "voisin": str,
+                "temps": int,
+                "ligne": str
+            }
+        ]
+    }
+    depart: nom de la station de départ (str)
+    arrivee: nom de la station d'arrivée (str)
+
+    Retourne
+    --------
+    message: un message informant sur le temps de trajet ave cet sans perturbations (str)
     """
 
     # Dijkstra sur le graphe normal
