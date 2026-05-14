@@ -38,7 +38,7 @@ Lors de la première séance nous avons pris connaissance du sujet et des diffé
 - Julie : Charger des données + gestion des perturbations
 - Sarah : Parcourir le réseau
 - Rosalie : Trouver le meilleur itinéraire (en implémentant l'algorithme de Dijkstra)
-- Arthaud : 
+- Arthaud : Interface PyQt
 - Arthur : Visualisation du graphe
   
 Nous avons chacun de notre côté commencé à travailler sur notre partie afin de bien comprendre les livrables attendus ainsi que les algorithmes à utiliser.
@@ -46,6 +46,7 @@ Nous avons chacun de notre côté commencé à travailler sur notre partie afin 
 Lors des séances suivantes, nous avons chacun travaillé sur notre code, puis nous avons mis en commun.
 
 ## Difficultés rencontrées 
+Fonctionnement des différents codes ensemble
 
 
 ## Bonnes pratiques de programmation
