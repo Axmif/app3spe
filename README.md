@@ -15,7 +15,6 @@ Rosalie (user1-r0) : Barreur
 - charger_donnees.py  
 - parcours_reseau.py
 - meilleur_itineraire.py
-- generalisation.py
 - interface.py
 - visualisation_graphe.py
 - gestion_des_perturbations.py
@@ -23,13 +22,57 @@ Rosalie (user1-r0) : Barreur
   
 ## Choix techniques : structure de données, algorithmes utilisés...
 ### Structures de données utilisées :
+- graphes non orientés
+- listes d’adjacence
+- dictionnaires Python (dict)
+- listes (list)
+- ensembles (set)
+- files (deque)
+- tuples
+- graphes NetworkX
+- interface graphique PyQt
+- figures Matplotlib
 
 ### Algorithmes utilisés  :
+- algorithme de Dijkstra
+- parcours en largeur (BFS)
+- parcours en profondeur (DFS)
+- reconstruction de chemin optimal
+- vérification de connexité
+- gestion des correspondances
+- suppression de sommets (fermeture de station)
+- suppression d’arêtes (fermeture de tronçon)
+- suppression de lignes entières
+- comparaison de temps de trajet
+- parcours récursif
+- visualisation de graphe
+- placement automatique de sommets (spring_layout, kamada_kawai_layout)
 
 ## Utilisation
 
 
-Pour utiliser ce programme:  
+Pour utiliser ce programme:
+1. Installer les bibliothèques nécessaires :
+   - PyQt5 ou PyQt6
+   - matplotlib
+   - networkx
+2. Placer les fichiers JSON des réseaux (bordeaux.json, lyon.json, paris.json, lille.json) dans le même dossier que le projet.
+3. Lancer le programme avec le fichier interface.py
+4. Sélectionner une ville dans l’interface.
+5. Choisir une station de départ et une station d’arrivée.
+6. Cliquer sur Calculer l’itinéraire pour obtenir dans l'onglet "Résultats":
+   - le meilleur trajet,
+   - les lignes empruntées,
+   - les correspondances,
+   - le temps total de parcours
+7. Utiliser les autres fonctionnalités disponibles :
+   - BFS (moins d’arrêts),
+   - DFS,
+   - vérification de connexité,
+   - affichage des correspondances,
+   - visualisation du réseau,
+   - gestion des perturbations : fermeture de station, fermeture de tronçon, fermeture de ligne entière.
+8. Le graphe du réseau et l’itinéraire calculé sont affichés dans l’onglet Visualisation
 
 
 ## Structure du projet
@@ -38,7 +81,7 @@ Lors de la première séance nous avons pris connaissance du sujet et des diffé
 - Julie : Charger des données + gestion des perturbations
 - Sarah : Parcourir le réseau
 - Rosalie : Trouver le meilleur itinéraire (en implémentant l'algorithme de Dijkstra)
-- Arthaud : Interface PyQt
+- Arthaud : Interface PyQt + Généraliser à plusieurs villes
 - Arthur : Visualisation du graphe
   
 Nous avons chacun de notre côté commencé à travailler sur notre partie afin de bien comprendre les livrables attendus ainsi que les algorithmes à utiliser.
