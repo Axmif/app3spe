@@ -81,7 +81,7 @@ Lors de la première séance nous avons pris connaissance du sujet et des diffé
 - Romain : 
 - Julie : Charger des données + gestion des perturbations
 - Sarah : Parcourir le réseau
-- Rosalie : Trouver le meilleur itinéraire (en implémentant l'algorithme de Dijkstra)
+- Rosalie : Trouver le meilleur itinéraire (en implémentant l'algorithme de Dijkstra) et ajouter des critères (le plus rapide, avec le moins de correspondances, le plus confortable
 - Arthaud : Interface PyQt + Généraliser à plusieurs villes
 - Arthur : Visualisation du graphe
   
