@@ -81,13 +81,16 @@ Lors de la première séance nous avons pris connaissance du sujet et des diffé
 - Romain : 
 - Julie : Charger des données + gestion des perturbations
 - Sarah : Parcourir le réseau
-- Rosalie : Trouver le meilleur itinéraire (en implémentant l'algorithme de Dijkstra) et ajouter des critères (le plus rapide, avec le moins de correspondances, le plus confortable
+- Rosalie : Trouver le meilleur itinéraire (en implémentant l'algorithme de Dijkstra) et ajouter des critères (le plus rapide, avec le moins de correspondances, le plus confortable)
 - Arthaud : Interface PyQt + Généraliser à plusieurs villes
 - Arthur : Visualisation du graphe
   
 Nous avons chacun de notre côté commencé à travailler sur notre partie afin de bien comprendre les livrables attendus ainsi que les algorithmes à utiliser.
 
 Lors des séances suivantes, nous avons chacun travaillé sur notre code, puis nous avons mis en commun.
+Nous avons ensuite amélioré l'interface afin qu'elle soit la mieux contruite possible. Nous avons également rajouter des options comme la gestion des perturbations ou encore la visualisation du graphe.
+
+Contrairement aux approches classiques qui proposent un seul itinérair optionnel, notre code intègre un système multi-critères permettant de générer plusieurs trajets adaptés aux préférences de l'utilisateur (temps, correspondances, confort). 
 
 ## Difficultés rencontrées 
 Fonctionnement des différents codes ensemble
