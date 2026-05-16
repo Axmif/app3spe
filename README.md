@@ -34,7 +34,7 @@ Ce projet consiste à développer un calculateur d'itinéraires de transports en
 - interface graphique PyQt
 - figures Matplotlib
 
-### Algorithmes utilisés  :
+### Algorithmes utilisés ⌨️  :
 - algorithme de Dijkstra
 - parcours en largeur (BFS)
 - parcours en profondeur (DFS)
@@ -50,7 +50,6 @@ Ce projet consiste à développer un calculateur d'itinéraires de transports en
 - placement automatique de sommets (spring_layout, kamada_kawai_layout)
 
 ## Utilisation
-
 
 Pour utiliser ce programme:
 1. Installer les bibliothèques nécessaires :
@@ -76,7 +75,7 @@ Pour utiliser ce programme:
 8. Le graphe du réseau et l’itinéraire calculé sont affichés dans l’onglet Visualisation
 
 
-## Structure du projet
+## Structure du projet 📑
 Lors de la première séance nous avons pris connaissance du sujet et des différentes tâches à réaliser. Nous nous sommes également répartis le travail de la manière suivante : 
 - Romain : 
 - Julie : Charger des données + gestion des perturbations
@@ -92,11 +91,11 @@ Nous avons ensuite amélioré l'interface afin qu'elle soit la mieux contruite p
 
 Contrairement aux approches classiques qui proposent un seul itinérair optionnel, notre code intègre un système multi-critères permettant de générer plusieurs trajets adaptés aux préférences de l'utilisateur (temps, correspondances, confort). 
 
-## Difficultés rencontrées 
+## Difficultés rencontrées ❌
 Fonctionnement des différents codes ensemble
 
 
-## Bonnes pratiques de programmation
+## Bonnes pratiques de programmation ✅
 Nous avons veillé à respecter les bonnes pratiques de programmation tout au long du projet, à savoir :
 - la syntaxe 
 - l’organisation du code 
