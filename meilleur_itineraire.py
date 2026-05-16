@@ -1,3 +1,4 @@
+# --------------------------- DIJKSTRA MULTI-CRITÈRES ---------------------------
 def dijkstra(G, source, critere="temps"):
     """
     Dijkstra avec gestion de plusieurs critères :
@@ -10,8 +11,6 @@ def dijkstra(G, source, critere="temps"):
     distances[source] = 0
 
     parents = {station: None for station in G}
-
-    # Ligne utilisée pour arriver à la station
     lignes = {station: None for station in G}
 
     non_visites = set(G)
@@ -48,7 +47,6 @@ def dijkstra(G, source, critere="temps"):
                     cout += 300  # pénalité plus forte
 
             else:
-                # Par défaut = temps
                 cout = distances[u] + temps
                 if changement:
                     cout += 120
@@ -83,16 +81,16 @@ def reconstruire_chemin(parents, source, arrivee):
     return chemin
 
 
-# ------------------------- AFFICHAGE DE L'ITINERAIRE ---------------------------
+# ------------------------- AFFICHAGE D'UN ITINÉRAIRE ---------------------------
 def afficher_itineraire(chemin, parents, distances, critere="temps"):
 
     if chemin is None:
         print("❌ Aucun chemin trouvé.")
         return
 
-    print("\n🚇 ITINÉRAIRE\n")
+    print("\n🚇 ITINÉRAIRE")
 
-    # Titre selon critère
+    # 🎯 TITRE SELON CRITÈRE
     if critere == "temps":
         print("⚡ Plus rapide\n")
     elif critere == "correspondances":
@@ -128,6 +126,37 @@ def afficher_itineraire(chemin, parents, distances, critere="temps"):
         print(f"⏱ Temps total : {distances[chemin[-1]]} secondes")
 
     print()
+
+
+# ---------------------- AFFICHAGE DES 3 ITINÉRAIRES ---------------------------
+def afficher_tous_les_itineraires(G, depart, arrivee):
+
+    print("\n" + "="*60)
+    print("🚇 CALCULATEUR D'ITINÉRAIRES MULTI-CRITÈRES")
+    print("="*60)
+    print(f"📍 Trajet de {depart} à {arrivee}")
+    print("="*60)
+
+    # ⚡ Plus rapide
+    dist, parents = dijkstra(G, depart, "temps")
+    chemin = reconstruire_chemin(parents, depart, arrivee)
+    afficher_itineraire(chemin, parents, dist, "temps")
+
+    print("-"*60)
+
+    # 🔁 Moins de correspondances
+    dist2, parents2 = dijkstra(G, depart, "correspondances")
+    chemin2 = reconstruire_chemin(parents2, depart, arrivee)
+    afficher_itineraire(chemin2, parents2, dist2, "correspondances")
+
+    print("-"*60)
+
+    # 😌 Plus confortable
+    dist3, parents3 = dijkstra(G, depart, "confort")
+    chemin3 = reconstruire_chemin(parents3, depart, arrivee)
+    afficher_itineraire(chemin3, parents3, dist3, "confort")
+
+    print("="*60)
 
         print(f"   {station} → {suivante} (ligne {ligne})")
 
