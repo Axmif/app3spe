@@ -10,7 +10,7 @@ Arthur (jurevej) : Gardien du temps
 Arthaud (Axmif Akiiko) : Intégrateur Git     
 Rosalie (user1-r0) : Barreur  
 ## Description
-
+Ce projet consiste à développer un calculateur d'itinéraires de transports en commun hors ligne, basé sur des graphes et l'algorithme de Dijkstra. Il permet de trouver différents trajets entre deux stations selon plusieurs critère (temps, correspondances, confort), tout en étant générique et adaptable à plusieurs villes via des fichiers JSON.
 ## Parties à coder
 -> main.py
 - charger_donnees.py  
