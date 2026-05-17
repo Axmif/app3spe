@@ -2,9 +2,31 @@ import heapq
 
 # --------------------------- DIJKSTRA MULTI-CRITERES ---------------------------
 def dijkstra(G, source, critere="temps"):
+      """
+    Algorithme de Dijkstra pour le réseau de transport.
+
+    G est une liste d'adjacence :
+    {
+        station: [
+            {
+                "voisin": str,
+                "temps": int,
+                "ligne": str
+            }
+        ]
+    }
+    Atention: cette version de dijkstra peut: ajouter des correspondances inutiles,
+    ou oublier des correspondances,
+    donc donner un faux plus court chemin
+
+    Retourne
+    -------
+    un tuple (distances, parents):
+    distances: dictionnaire {station: temps minimal depuis la station de départ}
+    parents: dictionnaire {station: (station précédente, ligne)}
+
     """
-    Dijkstra corrigé avec gestion des états (station, ligne)
-    """
+
 
     distances = {}
     parents = {}
