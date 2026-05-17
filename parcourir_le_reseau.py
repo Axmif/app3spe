@@ -178,7 +178,22 @@ def verifier_connexite(graphe):
             "unreachable": []
         }
 
-    depart = stations[0]
+    # choisir une station NON isolée
+    depart = None
+
+    for s in stations:
+        if graphe[s]:
+            depart = s
+            break
+
+    # aucun sommet connecté
+    if depart is None:
+        return {
+            "is_connected": False,
+            "reachable_count": 0,
+            "total_count": len(stations),
+            "unreachable": stations
+        }
 
     visites = set([depart])
 

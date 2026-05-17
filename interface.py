@@ -351,6 +351,15 @@ QTabBar::tab:hover {
         lo.addWidget(QLabel("Arrivée :"))
         self.combo_arr = QComboBox()
         lo.addWidget(self.combo_arr)
+        # ajout des critères dijkstra
+        lo.addWidget(QLabel("Critère :"))
+        self.combo_critere = QComboBox()
+        self.combo_critere.addItems([
+             "temps",
+             "correspondances",
+             "confort"
+             ])
+        lo.addWidget(self.combo_critere)
         b_it = QPushButton("Calculer l'itinéraire")
         b_it.clicked.connect(self._calculer_itineraire)
         lo.addWidget(b_it)
@@ -570,14 +579,23 @@ QTabBar::tab:hover {
             QMessageBox.information(self, "Info", "Départ et arrivée identiques.")
             return
         try:
-            distances, parents = dijkstra(self.graphe_actif, dep)
+            critere = self.combo_critere.currentText()
+            distances, parents = dijkstra(self.graphe_actif, dep, critere)
             chemin = reconstruire_chemin(parents, dep, arr)
         except Exception as e:
             _err(self, "Dijkstra", str(e))
             return
 
         self._clear_out()
-        self._append_out("ITINÉRAIRE OPTIMAL (Dijkstra)\n")
+        if critere == "temps":
+            titre = "ITINÉRAIRE LE PLUS RAPIDE"
+        elif critere == "correspondances":
+            titre = "ITINÉRAIRE AVEC LE MOINS DE CORRESPONDANCES"
+        elif critere == "confort":
+            titre = "ITINÉRAIRE LE PLUS CONFORTABLE"
+        else:
+            titre = "ITINÉRAIRE"
+        self._append_out(f"{titre}\n")
         self._append_out(f"  {dep} → {arr}\n")
 
         if not chemin:
@@ -602,7 +620,12 @@ QTabBar::tab:hover {
             ligne_actuelle = ligne
 
         self._append_out(f"\n\nArrivée : {chemin[-1]}")
-        self._append_out(f"\nTemps total : {temps_total} s ({temps_total // 60} min {temps_total % 60} s)")
+
+        if critere == "correspondances":
+            self._append_out(f"\nNombre de correspondances : {temps_total}")
+        else:
+            self._append_out(f"\nTemps total : {temps_total} s ({temps_total // 60} min {temps_total % 60} s)")
+
         self._append_out(f"\nStations traversées : {len(chemin)}")
         if self.perturbations:
             self._append_out("\n--- Perturbations actives ---")
@@ -675,7 +698,8 @@ QTabBar::tab:hover {
     def _afficher_correspondances(self):
         if not self._verifier_reseau():
             return
-        transfers = get_transfer_stations(self.reseau)
+        transfers = [(station, lignes) for station, lignes in get_transfer_stations(self.reseau) if station in self.graphe_actif]
+
         self._clear_out()
         self._append_out(f"CORRESPONDANCES ({len(transfers)})\n")
         for station, lignes in transfers:

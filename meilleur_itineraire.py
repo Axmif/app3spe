@@ -5,6 +5,29 @@ def dijkstra(G, source, critere="temps"):
     - "temps" : plus rapide
     - "correspondances" : moins de changements
     - "confort" : pénalise les correspondances
+
+    G: liste d'adjacence :
+    {
+        station: [
+            {
+                "voisin": str,
+                "temps": int,
+                "ligne": str
+            }
+        ]
+    }
+
+    source: nom de la station de départ (str)
+    critere: le critère utilisé
+    Atention: cette version de dijkstra peut: ajouter des correspondances inutiles,
+    ou oublier des correspondances,
+    donc donner un faux plus court chemin
+
+    Retourne
+    -------
+    un tuple (distances, parents):
+    distances: dictionnaire {station: temps minimal depuis la station de départ}
+    parents: dictionnaire {station: (station précédente, ligne)}
     """
 
     distances = {station: float("inf") for station in G}
@@ -34,17 +57,17 @@ def dijkstra(G, source, critere="temps"):
             if critere == "temps":
                 cout = distances[u] + temps
                 if changement:
-                    cout += 120
+                    cout += 120      # temps de correspondance réelle
 
             elif critere == "correspondances":
                 cout = distances[u]
                 if changement:
-                    cout += 1
+                    cout += 1      # on minimise uniquement le nombre
 
             elif critere == "confort":
                 cout = distances[u] + temps
                 if changement:
-                    cout += 300  # pénalité plus forte
+                    cout += 300  # pénalité de confort (éviter les changements)
 
             else:
                 cout = distances[u] + temps
@@ -64,6 +87,9 @@ def dijkstra(G, source, critere="temps"):
 
 # --------------------------- RECONSTRUCTION DU CHEMIN ---------------------------
 def reconstruire_chemin(parents, source, arrivee):
+    """
+    Reconstruit le chemin optimal entre deux stations.
+    """
 
     if parents[arrivee] is None and source != arrivee:
         return None
@@ -83,6 +109,13 @@ def reconstruire_chemin(parents, source, arrivee):
 
 # ------------------------- AFFICHAGE D'UN ITINÉRAIRE ---------------------------
 def afficher_itineraire(chemin, parents, distances, critere="temps"):
+    """
+    Affiche un itinéraire lisible :
+    - lignes utilisées
+    - correspondances
+    - stations
+    - temps total
+    """
 
     if chemin is None:
         print("❌ Aucun chemin trouvé.")
@@ -157,10 +190,3 @@ def afficher_tous_les_itineraires(G, depart, arrivee):
     afficher_itineraire(chemin3, parents3, dist3, "confort")
 
     print("="*60)
-
-        print(f"   {station} → {suivante} (ligne {ligne})")
-
-        ligne_actuelle = ligne
-
-    print(f"\n🏁 Arrivée à {chemin[-1]}")
-    print(f"⏱ Temps total : {distances[chemin[-1]]} secondes\n")
