@@ -1,10 +1,22 @@
 # --------------------------- DIJKSTRA MULTI-CRITÈRES ---------------------------
+import heapq
+
 def dijkstra(G, source, critere="temps"):
     """
     Dijkstra avec gestion de plusieurs critères :
     - "temps" : plus rapide
     - "correspondances" : moins de changements
     - "confort" : pénalise les correspondances
+
+    Cette version tient compte de la ligne actuelle
+    dans l'état du graphe :
+        (station, ligne)
+
+    Cela évite les faux plus courts chemins
+    liés aux correspondances.
+
+    Paramètres
+    ----------
 
     G: liste d'adjacence :
     {
@@ -19,9 +31,6 @@ def dijkstra(G, source, critere="temps"):
 
     source: nom de la station de départ (str)
     critere: le critère utilisé
-    Atention: cette version de dijkstra peut: ajouter des correspondances inutiles,
-    ou oublier des correspondances,
-    donc donner un faux plus court chemin
 
     Retourne
     -------
@@ -30,57 +39,122 @@ def dijkstra(G, source, critere="temps"):
     parents: dictionnaire {station: (station précédente, ligne)}
     """
 
-    distances = {station: float("inf") for station in G}
-    distances[source] = 0
+    # ---------------- ÉTATS ----------------
+    # Un état = (station, ligne_actuelle)
 
-    parents = {station: None for station in G}
-    lignes = {station: None for station in G}
+    distances_etats = {}
+    parents_etats = {}
 
-    non_visites = set(G)
+    # File de priorité
+    file = []
 
-    while non_visites:
+    # État initial
+    etat_initial = (source, None)
 
-        u = min(non_visites, key=lambda x: distances[x])
+    distances_etats[etat_initial] = 0
+    parents_etats[etat_initial] = None
 
-        if distances[u] == float("inf"):
-            break
+    heapq.heappush(file, (0, source, None))
+
+    while file:
+
+        distance_u, u, ligne_u = heapq.heappop(file)
+
+        # Ignore les anciennes entrées du tas
+        if distance_u > distances_etats[(u, ligne_u)]:
+            continue
 
         for arete in G[u]:
 
             v = arete["voisin"]
             temps = arete["temps"]
-            ligne = arete["ligne"]
+            ligne_v = arete["ligne"]
 
-            changement = lignes[u] is not None and lignes[u] != ligne
+            # Correspondance ?
+            changement = (
+                ligne_u is not None
+                and ligne_u != ligne_v
+            )
 
-            # 🔥 Gestion des critères
+            # ---------------- COÛTS ----------------
             if critere == "temps":
-                cout = distances[u] + temps
-                if changement:
-                    cout += 120      # temps de correspondance réelle
 
-            elif critere == "correspondances":
-                cout = distances[u]
-                if changement:
-                    cout += 1      # on minimise uniquement le nombre
+                cout = distance_u + temps
 
-            elif critere == "confort":
-                cout = distances[u] + temps
-                if changement:
-                    cout += 300  # pénalité de confort (éviter les changements)
-
-            else:
-                cout = distances[u] + temps
                 if changement:
                     cout += 120
 
-            # Relaxation
-            if cout < distances[v]:
-                distances[v] = cout
-                parents[v] = (u, ligne)
-                lignes[v] = ligne
+            elif critere == "correspondances":
 
-        non_visites.remove(u)
+                cout = distance_u
+
+                if changement:
+                    cout += 1
+
+            elif critere == "confort":
+
+                cout = distance_u + temps
+
+                if changement:
+                    cout += 300
+
+            else:
+
+                cout = distance_u + temps
+
+                if changement:
+                    cout += 120
+
+            nouvel_etat = (v, ligne_v)
+
+            # Relaxation
+            if (
+                nouvel_etat not in distances_etats
+                or cout < distances_etats[nouvel_etat]
+            ):
+
+                distances_etats[nouvel_etat] = cout
+                parents_etats[nouvel_etat] = (u, ligne_u)
+
+                heapq.heappush(
+                    file,
+                    (cout, v, ligne_v)
+                )
+
+    # -------------------------------------------------
+    # CONVERSION VERS LE FORMAT ORIGINAL
+    # distances : {station: cout}
+    # parents   : {station: (station_precedente, ligne)}
+    # -------------------------------------------------
+
+    distances = {
+        station: float("inf")
+        for station in G
+    }
+
+    parents = {
+        station: None
+        for station in G
+    }
+
+    # Pour chaque état final
+    for (station, ligne), cout in distances_etats.items():
+
+        if cout < distances[station]:
+
+            distances[station] = cout
+
+            parent_etat = parents_etats[(station, ligne)]
+
+            if parent_etat is not None:
+
+                station_parent, ligne_parent = parent_etat
+
+                # La ligne utilisée pour arriver ici
+                parents[station] = (
+                    station_parent,
+                    ligne
+                )
 
     return distances, parents
 
@@ -126,8 +200,10 @@ def afficher_itineraire(chemin, parents, distances, critere="temps"):
     # 🎯 TITRE SELON CRITÈRE
     if critere == "temps":
         print("⚡ Plus rapide\n")
+
     elif critere == "correspondances":
         print("🔁 Moins de correspondances\n")
+
     elif critere == "confort":
         print("😌 Plus confortable\n")
 
@@ -144,9 +220,15 @@ def afficher_itineraire(chemin, parents, distances, critere="temps"):
             print(f"➡️ Prendre la ligne {ligne} à {station}")
 
         elif ligne != ligne_actuelle:
-            print(f"🔁 Correspondance à {station} (ligne {ligne_actuelle} → {ligne})")
+            print(
+                f"🔁 Correspondance à {station} "
+                f"(ligne {ligne_actuelle} → {ligne})"
+            )
 
-        print(f"   {station} → {suivante} (ligne {ligne})")
+        print(
+            f"   {station} → {suivante} "
+            f"(ligne {ligne})"
+        )
 
         ligne_actuelle = ligne
 
@@ -154,9 +236,16 @@ def afficher_itineraire(chemin, parents, distances, critere="temps"):
 
     # Affichage du coût
     if critere == "correspondances":
-        print(f"🔁 Nombre de correspondances : {distances[chemin[-1]]}")
+        print(
+            f"🔁 Nombre de correspondances : "
+            f"{distances[chemin[-1]]}"
+        )
+
     else:
-        print(f"⏱ Temps total : {distances[chemin[-1]]} secondes")
+        print(
+            f"⏱ Temps total : "
+            f"{distances[chemin[-1]]} secondes"
+        )
 
     print()
 
@@ -180,13 +269,23 @@ def afficher_tous_les_itineraires(G, depart, arrivee):
     # 🔁 Moins de correspondances
     dist2, parents2 = dijkstra(G, depart, "correspondances")
     chemin2 = reconstruire_chemin(parents2, depart, arrivee)
-    afficher_itineraire(chemin2, parents2, dist2, "correspondances")
+    afficher_itineraire(
+        chemin2,
+        parents2,
+        dist2,
+        "correspondances"
+    )
 
     print("-"*60)
 
     # 😌 Plus confortable
     dist3, parents3 = dijkstra(G, depart, "confort")
     chemin3 = reconstruire_chemin(parents3, depart, arrivee)
-    afficher_itineraire(chemin3, parents3, dist3, "confort")
+    afficher_itineraire(
+        chemin3,
+        parents3,
+        dist3,
+        "confort"
+    )
 
     print("="*60)
