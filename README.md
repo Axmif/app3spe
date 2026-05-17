@@ -93,6 +93,7 @@ Contrairement aux approches classiques qui proposent un seul itinérair optionne
 
 ## Difficultés rencontrées ❌
 Fonctionnement des différents codes ensemble
+Trouver une forme de dictionnaire python qui puisse être utilisée par tous les codes pour représenter le graphe
 
 
 ## Bonnes pratiques de programmation ✅
